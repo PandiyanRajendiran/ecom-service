@@ -13,19 +13,17 @@ jobs:
     env:
       APP_ID: 6f3ae4c46350a0244458362d3981ed0a0c1734501107068d81c910340593a7c7
       BRANCH_NAME: main
-      SCAN_ID: 0e077f62a9b28c82f323accf4b993526183d0029b08b517d25a0219dbfc33bcb
-      REQ_URL_MAP: "${{toJSON('{\"SL_RESULT_API_HOST\":\"https://e276-157-51-176-107.ngrok.io/resultapi\"\
-        ,\"SL_RESULTPARSER_API_HOST\":\"https://183a-157-51-176-107.ngrok.io/resultparserapi\"\
+      SCAN_ID: 14c4569da11ccf66c04f916bcb8ecea9e3e5e235c7c8773ac369ff96b5cd8dba
+      REQ_URL_MAP: "${{toJSON('{\"SL_RESULT_API_HOST\":\"https://3889-27-5-183-241.ngrok.io/resultapi\"\
+        ,\"SL_RESULTPARSER_API_HOST\":\"https://3889-27-5-183-241.ngrok.io/resultparserapi\"\
         }')}}"
     steps:
     - name: Retrieve Token Info
       id: auth_token
-      run: "respJson=$(curl --location --request GET 'https://e276-157-51-176-107.ngrok.io/resultapi/aws/ecr/token'\
+      run: "respJson=$(curl --location --request GET 'https://3889-27-5-183-241.ngrok.io/resultapi/aws/ecr/token'\
         \  --header 'Authorization: Bearer ${{secrets.CLI_ACCESS_TOKEN}}'  --data-raw\
         \ ' ' )\necho \"::set-output name=authTokenJson::$respJson\""
     - uses: actions/checkout@v2
-    - name: Build with Maven
-      run: mvn -q --batch-mode --update-snapshots verify
     - name: Scan Initiated
       id: sec_scan_init
       run: "usrVal=$(echo '${{fromJson(steps.auth_token.outputs.authTokenJson).user}}'\
@@ -41,8 +39,8 @@ jobs:
         \ --volume ${{github.workspace}}:/workdir -v /var/run/docker.sock:/var/run/docker.sock\
         \ $usrImgTag -access_tkn ${{secrets.CLI_ACCESS_TOKEN}} -app_id ${{ env.APP_ID\
         \ }} -scan_id ${{ env.SCAN_ID }} -branch_name ${{ env.BRANCH_NAME }} -req_url_map\
-        \ ${{ env.REQ_URL_MAP }} event:${{ github.event_name }}  pr_number:${{ github.event.number\
-        \ }}"
+        \ ${{ env.REQ_URL_MAP }} -tool_name github event:${{ github.event_name }}\
+        \  pr_number:${{ github.event.number }}"
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v1
       with:
