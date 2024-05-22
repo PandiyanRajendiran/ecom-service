@@ -13,7 +13,7 @@ jobs:
     env:
       APP_ID: 0609bfde7cd062f17eda40d89098f45ded9e0fa334dd88709c52ab0fef2f668b
       BRANCH_NAME: snyk-fix-48bf461fa5c5825db36c320ebf7b3750
-      SCAN_ID: c975d4a2512da0f145386c56f942ab12a259fb6222f0839e194cb407df25895a
+      SCAN_ID: 43c9482ef0e9909cc59a8e88a057114efa7508454a2f86759c9b449fdaef3af8
       REQ_URL_MAP: "${{toJSON('{\"SL_RESULT_API_HOST\":\"https://slresultapi.uat.securin.io/resultapi\"\
         ,\"SL_RESULTPARSER_API_HOST\":\"https://slresultparserapi.uat.securin.io/resultparserapi\"\
         }')}}"
@@ -49,4 +49,6 @@ jobs:
     - name: Evaluate build status
       run: "cat ${{github.workspace}}/results/status.txt\nexit 1\n"
       if: hashFiles('**/status.txt') !=''
+    permissions:
+      security-events: write
     runs-on: ubuntu-latest
